@@ -1,5 +1,5 @@
 import React, { useState}  from 'react';
-import { StyleSheet, Text, View, TextInput, Button, FlatList, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button, FlatList, Alert, Image } from 'react-native';
 
 export default function App() {
 
@@ -7,16 +7,13 @@ export default function App() {
   const [recipe, setRecipes] = useState([]);
 
   const getRecipes= () => {
-    const url = 'http://www.recipepuppy.com/api/?i=' + {desc};
+    const url = 'http://www.recipepuppy.com/api/?i=' + desc;
     
     fetch(url)
     .then((response) => response.json())
     .then((data) => { 
-      setRecipes(data);
-    })
-    .catch((error) => { 
-      Alert.alert('Sattui virhe:', error); 
-    }); 
+      setRecipes(data.results);
+    });
   }
 
   const listSeparator = () => {
@@ -24,10 +21,11 @@ export default function App() {
       <View
         style={{
           height: 1,
-          padding: 10,
-          width: "80%",
+          padding: 1,
+          width: "90%",
           backgroundColor: "#CED0CE",
-          marginLeft: "10%"
+          marginLeft: "1%",
+          paddingTop:  3
         }}
       />
     );
@@ -35,11 +33,22 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text>{}</Text>
       <FlatList 
         style={{marginLeft : "5%"}}
         keyExtractor={item => item.id} 
-        renderItem={({item}) => <Text> {item.results.title}</Text>} 
+        renderItem={({item}) => {
+          return (
+            <View>
+              <Text> {item.title} </Text>
+              <Image
+                style= {{height: 50, width: 50}}
+                source= {{
+                  uri: `${item.thumbnail}`
+                }}
+              /> 
+            </View>
+          );
+        }}
         ItemSeparatorComponent={listSeparator}
         data={recipe} 
       />  
@@ -60,6 +69,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 30,
+    padding: 10,
   },
 });
